@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>riff's coolest website EVAR!!!</title>
+<meta content="RIFF'S AWESOME WEBSITE" property="og:title" />
+<meta content="i made it (riff) (that's me) :3" property="og:description" />
+<meta content="#c80000" data-react-helmet="true" name="theme-color" />
+</head>
+<body bgcolor=0 text=ffffff>
+
+<style>
+
+@font-face {
+  font-family: "comic_sans";
+  src: url("comic-sans.woff") format('woff');
+}
+
+@font-face {
+  font-family: "ode_to_idle_gaming";
+  src: url("ode_to_idle_gaming.woff") format('woff');
+}
+
+@font-face {
+  font-family: "Windows-Regular";
+  src: url("Windows-Regular.woff") format('woff');
+}
+
+.fpopup {
+  transform: rotate(var(--rot)) scale(100%, 100%);
+  transition: transform 70ms;
+}
+
+.fpopup.closed {
+  transform: rotate(var(--rot)) scale(100%, 0%);
+}
+
+</style>
+
+<div id="fauxpopup" class="fpopup closed" style="--rot:-3deg;position:absolute;top:200px;left:10%;width:fit-content;background-color:blue;border-style:outset;border-color:darkgray">
+
+    <div style="padding-bottom:3px" align="center">
+        <div style="position:absolute;right:3px;top:-3px;">&#x1F5D5; &#x1F5D6; 
+	    <font style="cursor:pointer;"
+		id="popupclose"
+		onclick="document.getElementById('fauxpopup').classList.add('closed');" 
+		onmouseenter="document.getElementById('popupclose').setAttribute('color', '#ff5050');"
+		onmouseleave="document.getElementById('popupclose').setAttribute('color', 'white');"
+		color="white">&#x1F5D9;</font>
+	</div>
+        <font size="3" style="font-family:Windows-Regular;">README.html</font>
+    </div>
+
+    <div style="padding-block:5px;padding-inline:7px;border-style:inset;border-color:lightgray;background-color:black">
+        <h1 style="position:relative;width:fit-content;transform:rotate(-2deg);font-family:comic_sans", class="rgbhere">weclome to my web size!!!1</h1>
+        <p>its cool and awesome!!! :3c i hope everyone likes it O_O</p>
+        <p>do u like the <span class="rgbhere">rainbow text</span> i made it my self on the toilet</p>
+        <audio controls="controls" autoplay>
+          what kind of browser are you on that does't support audio???
+          <source src="https://ia801903.us.archive.org/27/items/mother-4-soundtraaaack/45%20Battle%20Against%20a%20Dreamy%20Foe.mp3" type="audio/mp3">
+        </audio>
+    </div>
+</div>
+
+<!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
+      at the request of a friend -->
+<marquee scrollamount="30" style="position:absolute;bottom:0px">
+<img src="http://farm4.static.flickr.com/3484/3696757249_d353f90a53_o.gif" width="139" height="200">
+</marquee>
+
+<script>
+setTimeout(() => {document.getElementById("fauxpopup").classList.remove("closed");}, 500);
+
+const rgbhere = document.getElementsByClassName("rgbhere");
+for (var i=0; i < rgbhere.length; i++) {
+        var inText = rgbhere[i].innerHTML;
+    var temp = "";
+    for (var c=0; c < inText.length; c++) {
+        if (inText[c] != " ")
+        temp = temp + "<font class=\"rgbchar\">" + inText[c] + "</font>";
+        else temp = temp + " ";
+    }
+    rgbhere[i].innerHTML = temp;
+}
+
+const rgbtext = document.getElementsByClassName("rgbchar");
+var t = 0;
+var r, g, b, rs, gs, bs;
+const speed = 0.15;
+const offset = 0.25;
+const floatSpeed = 0.3;
+const floatOffset = 0.5;
+const floatMagnitude = 2;
+
+// this is dumb but css is dumber
+
+function Update() {
+        for (var i=0; i < rgbtext.length; i++) {
+        rgbtext[i].setAttribute("color", "white");
+        r = (Math.sin(t * speed - offset * i)/2 + 0.5) * 255;
+        g = (Math.cos(t * speed - offset * i)/2 + 0.5) * 255;
+        b = (-Math.sin(t * speed - offset * i)/2 + 0.5) * 255;
+        rs = Math.floor(r).toString(16);
+        gs = Math.floor(g).toString(16);
+        bs = Math.floor(b).toString(16);
+        if (rs.length < 2) {rs = "0" + rs;}
+        if (gs.length < 2) {gs = "0" + gs;}
+        if (bs.length < 2) {bs = "0" + bs;}
+        rgbtext[i].setAttribute("color", rs + gs + bs);
+        rgbtext[i].style = "position:relative; top:" +
+        Math.sin(t*floatSpeed-i*floatOffset)*floatMagnitude +"px;";
+    }
+    t += 1;
+}
+
+setInterval(Update, 32);
+
+</script>
+
+</body>
+</html>
