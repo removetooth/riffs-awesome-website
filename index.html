@@ -5,30 +5,28 @@
 <meta content="RIFF'S AWESOME WEBSITE" property="og:title" />
 <meta content="i made it (riff) (that's me) :3" property="og:description" />
 <meta content="#c80000" data-react-helmet="true" name="theme-color" />
-</head>
-<body bgcolor=0 text=ffffff>
-
 <style>
 
 @font-face {
   font-family: "comic_sans";
-  src: url("comic-sans.woff") format('woff');
+  src: url("fonts/comic-sans.woff") format('woff');
 }
 
 @font-face {
   font-family: "ode_to_idle_gaming";
-  src: url("ode_to_idle_gaming.woff") format('woff');
+  src: url("fonts/ode_to_idle_gaming.woff") format('woff');
 }
 
 @font-face {
   font-family: "Windows-Regular";
-  src: url("Windows-Regular.woff") format('woff');
+  src: url("fonts/Windows-Regular.woff") format('woff');
 }
 
 .fpopup {
   transform: rotate(var(--rot)) scale(100%, 100%);
   transition: transform 70ms;
-  background-color:blue;
+  background-color:lightgray;
+  border-width:3.5px;
   border-style:outset;
   border-color:darkgray;
   width:fit-content;
@@ -41,15 +39,18 @@
   font-face:Windows-Regular;
 }
 
+.win-dragbar {
+  padding-bottom:3px;
+  padding-inline:4px;
+  background-color:blue;
+}
+
 .win-bar-button {
   cursor:pointer;
 }
 
-.wc-solid {
-  background-color:lightgray;
-}
-
 .wc-bevel {
+  border-width:3.5px;
   border-style:inset;
   border-color:lightgray;
 }
@@ -65,26 +66,41 @@
   vertical-align:bottom;
 }
 
+.noselect {
+  user-select: none;
+}
+
 </style>
+</head>
+
+<body bgcolor=0 text=ffffff>
+
+<div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.3;">
+    last update 2/20/2023 - draggable windows!
+    <br><a style="color:#5050ff" href="https://github.com/removetooth/riffs-awesome-website/">view page source on github</a>
+</div>
 
 <template id="windowTemplate">
-<div class="fpopup closed" id="tempwinid">
-    <div style="padding-bottom:3px;" align="center">
-        <div style="position:absolute;right:3px;top:-3px;">&#x1F5D5; &#x1F5D6; 
-            <font class="win-bar-button popupclose" color="white">&#x1F5D9;</font>
+<div class="fpopup closed" id="tempwinid" onmousedown="makeMeHighest(this);">
+    <div class="win-dragbar" align="center" onmousedown="winDragStart(event, this.parentElement);" onmousemove="winDragMove(event, this.parentElement);" onmouseup="winDragEnd(this.parentElement);">
+        <div style="position:absolute;right:3px;top:-3px;">&#x1F5D5; &#x1F5D6;
+            <!-- i should eventually use CSS for this, but this is still improvement -->
+            <font class="win-bar-button popupclose" color="white" onmouseenter="this.color='#ff5050';" onmouseleave="this.color='white';">&#x1F5D9;</font>
         </div>
-    <font class="win-caption" size="3" style="font-family:Windows-Regular;">Untitled</font>
+        <font class="win-caption" size="3" style="font-family:Windows-Regular;">Untitled</font>
     </div>
-    <div class="win-content" style="background-color:darkgray;"></div>
+    <div class="win-content"></div>
 </div>
 </template>
 
 <template id="readmeTemplate">
-	<iframe class="win-xframe" src="README.html" style="--w:450px;--h:230px;"></iframe>
+    <div style="width:450px;height:230px;">
+        <iframe onmousemove="winDragMove(event);" class="win-xframe" src="README.html" style="width:inherit;height:inherit;"></iframe>
+    </div>
 </template>
 
 <template id="notepadTemplate">
-	<textarea style="width:300px;height:200px;border-width:0;font-family:Windows-Regular">you can't move windows yet, sorry! but you can still resize them :)</textarea>
+    <textarea style="width:300px;height:200px;border-width:0;font-family:Windows-Regular"></textarea>
 </template>
 
 <!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
@@ -98,32 +114,82 @@
 var windowId=0;
 var winTemp = document.getElementById("windowTemplate");
 
+highestWindow = 10;
+function makeMeHighest(element) {
+    if (!element.style.getPropertyValue('z-index') < highestWindow) {
+        highestWindow++;
+        element.style.setProperty('z-index', highestWindow);
+    }
+}
+
 function CreateWindow(title, content, x=0, y=0, rot=0, bevel=false, contentStyle=null) {
-	var c = winTemp.content.cloneNode(true);
+    var c = winTemp.content.cloneNode(true);
     var cdiv = c.querySelector("#tempwinid");
     var newId = "window"+windowId
     cdiv.id = newId;
     document.body.appendChild(c);
    
     var e = document.getElementById(newId);
-    e.setAttribute('style', '--x:'+x+';--y:'+y+';--rot:'+rot+';');
+    e.style.setProperty('--x', x);
+    e.style.setProperty('--y', y);
+    e.style.setProperty('--rot', rot);
+    makeMeHighest(e);
     setTimeout(() => {e.classList.remove('closed');}, 100);
+    e.isDragging=false;
     
     e.querySelector('.win-caption').innerHTML = title;
     
     var closeButton = e.querySelector('.popupclose');
-    closeButton.setAttribute("id", newId+"close");
-    closeButton.setAttribute("onClick", "document.getElementById('"+newId+"').classList.add('closed'); setTimeout(() => {document.getElementById('"+newId+"').remove();}, 200);");
-    closeButton.setAttribute("onmouseenter", "document.getElementById('"+newId+"close').setAttribute('color', '#ff5050');");
-    closeButton.setAttribute("onmouseleave", "document.getElementById('"+newId+"close').setAttribute('color', 'white');");
+    closeButton.window = e;
+    closeButton.setAttribute("onClick", "this.window.classList.add('closed'); setTimeout(() => {this.window.remove();}, 200);");
     
     var contentDiv = e.querySelector('.win-content');
-    contentDiv.classList.add(bevel ? 'wc-bevel' : 'wc-solid');
+    if(bevel) contentDiv.classList.add('wc-bevel');
     var cloneContent = content.content.cloneNode(true);
     contentDiv.appendChild(cloneContent);
     
     windowId++;
 }
+
+
+var isDragging = false;
+var dragWindow = null;
+
+function winDragStart(event) {
+    var cl = event.target.classList;
+    if (!cl.contains("win-dragbar")) return;
+    dragWindow = event.target.parentElement;
+
+    var winRect = dragWindow.getBoundingClientRect();
+    dragWindow.offsetX = winRect.left - event.clientX;
+    dragWindow.offsetY = winRect.top - event.clientY;
+
+    dragWindow.style.setProperty('cursor', 'grabbing');
+    isDragging = true;
+    document.body.classList.add("noselect");
+    
+    var frames = dragWindow.querySelectorAll(".win-xframe")
+    for (i=0; i<frames.length; i++) {frames[i].hidden = true;}
+}
+
+function winDragMove(event) {
+    if (isDragging) {
+        dragWindow.style.setProperty('--x', event.clientX + dragWindow.offsetX + "px");
+        dragWindow.style.setProperty('--y', event.clientY + dragWindow.offsetY + "px");
+    }
+}
+
+function winDragEnd(event) {
+    isDragging = false;
+    dragWindow.style.setProperty('cursor', 'auto');
+    document.body.classList.remove("noselect");
+    var frames = dragWindow.querySelectorAll(".win-xframe")
+    for (i=0; i<frames.length; i++) {frames[i].hidden = false;}
+}
+
+document.onmousedown = winDragStart;
+document.onmousemove = winDragMove;
+document.onmouseup = winDragEnd;
 
 readTemp = document.getElementById("readmeTemplate");
 setTimeout(() => {CreateWindow("README.html", readTemp, "10%", "200px", "-3deg", true);}, 500);
