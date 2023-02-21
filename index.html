@@ -100,19 +100,23 @@
 </template>
 
 <template id="notepadTemplate">
-    <textarea style="width:300px;height:200px;border-width:0;font-family:Windows-Regular"></textarea>
+    <div class="wc-bevel">
+        <textarea style="width:300px;height:200px;border-width:0;font-family:Windows-Regular"></textarea>
+    </div>
 </template>
 
 <!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
       at the request of a friend -->
 <marquee scrollamount="30" style="position:absolute;bottom:0px">
-<img src="http://farm4.static.flickr.com/3484/3696757249_d353f90a53_o.gif" style="cursor:pointer;" onClick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), '50%', '40%', '0', true);" width="139" height="200">
+<img src="http://farm4.static.flickr.com/3484/3696757249_d353f90a53_o.gif" style="cursor:pointer;" onClick="CreateWindow('Notepad', document.getElementById('notepadTemplate'));" width="139" height="200">
 </marquee>
 
 <script>
 
 var windowId=0;
 var winTemp = document.getElementById("windowTemplate");
+var openWindowX = Math.round(window.innerWidth/6);
+var openWindowY = Math.round(window.innerHeight/6);
 
 highestWindow = 10;
 function makeMeHighest(element) {
@@ -122,7 +126,7 @@ function makeMeHighest(element) {
     }
 }
 
-function CreateWindow(title, content, x=0, y=0, rot=0, bevel=false, contentStyle=null) {
+function CreateWindow(title, content, x=-1, y=-1, rot=0, bevel=false, contentStyle=null) {
     var c = winTemp.content.cloneNode(true);
     var cdiv = c.querySelector("#tempwinid");
     var newId = "window"+windowId
@@ -130,8 +134,17 @@ function CreateWindow(title, content, x=0, y=0, rot=0, bevel=false, contentStyle
     document.body.appendChild(c);
    
     var e = document.getElementById(newId);
-    e.style.setProperty('--x', x);
-    e.style.setProperty('--y', y);
+    if (x == -1 || y == -1) {
+        e.style.setProperty('--x', openWindowX+"px");
+        e.style.setProperty('--y', openWindowY+"px");
+        openWindowX = (openWindowX + 30) % window.innerWidth;
+        openWindowY = (openWindowY + 30) % window.innerHeight;
+    }
+    else
+    {
+        e.style.setProperty('--x', x);
+        e.style.setProperty('--y', y);
+    }
     e.style.setProperty('--rot', rot);
     makeMeHighest(e);
     setTimeout(() => {e.classList.remove('closed');}, 100);
