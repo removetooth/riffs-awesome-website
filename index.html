@@ -76,13 +76,14 @@
 <body bgcolor=0 text=ffffff>
 
 <div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.3;">
-    last update 2/20/2023 - draggable windows!
+    last update 2/22/2023 - window icons
     <br><a style="color:#5050ff" href="https://github.com/removetooth/riffs-awesome-website/">view page source on github</a>
 </div>
 
 <template id="windowTemplate">
 <div class="fpopup closed" id="tempwinid" onmousedown="makeMeHighest(this);">
     <div class="win-dragbar" align="center" onmousedown="winDragStart(event, this.parentElement);" onmousemove="winDragMove(event, this.parentElement);" onmouseup="winDragEnd(this.parentElement);">
+        <img class="win-icon" style="position:absolute;left:1px;height:24px" src="">
         <div style="position:absolute;right:3px;top:-3px;">&#x1F5D5; &#x1F5D6;
             <!-- i should eventually use CSS for this, but this is still improvement -->
             <font class="win-bar-button popupclose" color="white" onmouseenter="this.color='#ff5050';" onmouseleave="this.color='white';">&#x1F5D9;</font>
@@ -108,7 +109,7 @@
 <!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
       at the request of a friend -->
 <marquee scrollamount="30" style="position:absolute;bottom:0px">
-<img src="http://farm4.static.flickr.com/3484/3696757249_d353f90a53_o.gif" style="cursor:pointer;" onClick="CreateWindow('Notepad', document.getElementById('notepadTemplate'));" width="139" height="200">
+<img src="http://farm4.static.flickr.com/3484/3696757249_d353f90a53_o.gif" style="cursor:pointer;" onClick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/notes.png');" width="139" height="200">
 </marquee>
 
 <script>
@@ -126,7 +127,7 @@ function makeMeHighest(element) {
     }
 }
 
-function CreateWindow(title, content, x=-1, y=-1, rot=0, bevel=false, contentStyle=null) {
+function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, bevel=false, contentStyle=null) {
     var c = winTemp.content.cloneNode(true);
     var cdiv = c.querySelector("#tempwinid");
     var newId = "window"+windowId
@@ -151,6 +152,7 @@ function CreateWindow(title, content, x=-1, y=-1, rot=0, bevel=false, contentSty
     e.isDragging=false;
     
     e.querySelector('.win-caption').innerHTML = title;
+    e.querySelector('.win-icon').setAttribute('src', icon);
     
     var closeButton = e.querySelector('.popupclose');
     closeButton.window = e;
@@ -205,7 +207,7 @@ document.onmousemove = winDragMove;
 document.onmouseup = winDragEnd;
 
 readTemp = document.getElementById("readmeTemplate");
-setTimeout(() => {CreateWindow("README.html", readTemp, "10%", "200px", "-3deg", true);}, 500);
+setTimeout(() => {CreateWindow("README.html", readTemp, "assets/internet.png", "10%", "200px", "-3deg", true);}, 500);
 
 </script>
 
