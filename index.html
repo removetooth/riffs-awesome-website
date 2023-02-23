@@ -76,7 +76,7 @@
 <body bgcolor=0 text=ffffff>
 
 <div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.3;">
-    last update 2/22/2023 - window icons
+    last update 2/23/2023 - tentative web browsing!<br>taskbar soon hopefully
     <br><a style="color:#5050ff" href="https://github.com/removetooth/riffs-awesome-website/">view page source on github</a>
 </div>
 
@@ -106,11 +106,37 @@
     </div>
 </template>
 
+
+<template id="browserTemplate">
+    <input style="font-family:Windows-Regular;width:80%" type="text" class="inet-urlbar" value="https://">
+    <button style="font-family:Windows-Regular;width:10%" onclick="inet_loadPage(this.parentElement);">Go!</button>
+    <br>
+    <div class="wc-bevel" style="width:640px;height:480px;resize:both;">
+        <iframe src="inet-disclaimer.html" class="win-xframe" style="width:inherit;height:inherit"></iframe>
+    </div>
+    <marquee scrollamount="10" style="font-family:Windows-Regular;color:black;width:100%">Sometimes it's nice to step back and explore the wider web.</marquee>
+</template>
+<script>
+function inet_loadPage(obj) {
+	var bar = obj.querySelector(".inet-urlbar");
+	var frame = obj.querySelector(".win-xframe");
+	frame.setAttribute("src", bar.value);
+}
+</script>
+
+
 <!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
       at the request of a friend -->
 <marquee scrollamount="30" style="position:absolute;bottom:0px">
 <img src="http://farm4.static.flickr.com/3484/3696757249_d353f90a53_o.gif" style="cursor:pointer;" onClick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/notes.png');" width="139" height="200">
 </marquee>
+
+<!-- where buttons go, for now -->
+<div align="center" style="position:absolute;bottom:5px;right:5px">
+<img src="assets/construction.gif"> <img src="assets/notepad_button.png"> <img src="assets/paws.gif"><br>
+<img src="assets/antinft.gif"> <img src="assets/gregg.gif"> <img src="assets/fuzzy.png">
+
+</div>
 
 <script>
 
@@ -208,6 +234,7 @@ document.onmouseup = winDragEnd;
 
 readTemp = document.getElementById("readmeTemplate");
 setTimeout(() => {CreateWindow("README.html", readTemp, "assets/internet.png", "10%", "200px", "-3deg", true);}, 500);
+setTimeout(() => {CreateWindow("Internet", document.getElementById("browserTemplate"), "assets/internet.png", "50%", "30%");}, 1000);
 
 </script>
 
