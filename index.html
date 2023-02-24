@@ -47,6 +47,11 @@
 
 .win-bar-button {
   cursor:pointer;
+  color:white;
+}
+
+.win-bar-button:hover {
+  color: var(--color);
 }
 
 .wc-bevel {
@@ -66,6 +71,30 @@
   vertical-align:bottom;
 }
 
+.taskbar-button {
+  border-width:3px;
+  border-style:outset;
+  border-color:darkgray;
+}
+
+.taskbar {
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:45px;
+  background-color:lightgray;
+  border-style:outset none none none;
+  border-width:3px;
+  border-color:white;
+}
+
+.taskbar-button:active {
+  border-style:inset;
+  border-color:lightgray;
+  background-color:darkgray;
+}
+
 .noselect {
   user-select: none;
 }
@@ -76,17 +105,21 @@
 <body bgcolor=0 text=ffffff>
 
 <div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.3;">
-    last update 2/23/2023 - tentative web browsing!<br>taskbar soon hopefully
-    <br><a style="color:#5050ff" href="https://github.com/removetooth/riffs-awesome-website/">view page source on github</a>
+    last update 2/24/2023 - wip taskbar & very broken maximize/minimize
+    <br><a style="color:#5050ff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github</a>
 </div>
 
+<!--<div style="position:absolute;top:0;left:25%;height:200%;width:50%;background-color:#202020;"></div>-->
+
+
 <template id="windowTemplate">
-<div class="fpopup closed" id="tempwinid" onmousedown="makeMeHighest(this);">
+<div class="fpopup" id="tempwinid" onmousedown="makeMeHighest(this);">
     <div class="win-dragbar" align="center" onmousedown="winDragStart(event, this.parentElement);" onmousemove="winDragMove(event, this.parentElement);" onmouseup="winDragEnd(this.parentElement);">
         <img class="win-icon" style="position:absolute;left:1px;height:24px" src="">
-        <div style="position:absolute;right:3px;top:-3px;">&#x1F5D5; &#x1F5D6;
-            <!-- i should eventually use CSS for this, but this is still improvement -->
-            <font class="win-bar-button popupclose" color="white" onmouseenter="this.color='#ff5050';" onmouseleave="this.color='white';">&#x1F5D9;</font>
+        <div style="position:absolute;right:3px;top:-3px;">
+            <span class="win-bar-button minimize" style="--color:#0050ff">&#x1F5D5;</span>
+            <span class="win-bar-button fullscreen" style="--color:#00d000">&#x1F5D6;</span>
+            <span class="win-bar-button popupclose" style="--color:#ff5050;">&#x1F5D9;</span>
         </div>
         <font class="win-caption" size="3" style="font-family:Windows-Regular;">Untitled</font>
     </div>
@@ -95,7 +128,7 @@
 </template>
 
 <template id="readmeTemplate">
-    <div style="width:450px;height:230px;">
+    <div class="wc-bevel" style="width:450px;height:230px;">
         <iframe onmousemove="winDragMove(event);" class="win-xframe" src="README.html" style="width:inherit;height:inherit;"></iframe>
     </div>
 </template>
@@ -109,9 +142,11 @@
 
 <template id="browserTemplate">
     <input style="font-family:Windows-Regular;width:80%" type="text" class="inet-urlbar" value="https://">
-    <button style="font-family:Windows-Regular;width:10%" onclick="inet_loadPage(this.parentElement);">Go!</button>
+    <button style="font-family:Windows-Regular;width:5%" onclick="inet_loadPage(this.parentElement);">Go!</button>
+    <button style="font-family:Windows-Regular;width:5%" onclick="window.history.back()">&lt;-</button>
+    <button style="font-family:Windows-Regular;width:5%" onclick="window.history.forward()">-&gt;</button>
     <br>
-    <div class="wc-bevel" style="width:640px;height:480px;resize:both;">
+    <div class="wc-bevel" style="width:640px;height:480px;resize:both;overflow:auto;">
         <iframe src="inet-disclaimer.html" class="win-xframe" style="width:inherit;height:inherit"></iframe>
     </div>
     <marquee scrollamount="10" style="font-family:Windows-Regular;color:black;width:100%">Sometimes it's nice to step back and explore the wider web.</marquee>
@@ -124,17 +159,28 @@ function inet_loadPage(obj) {
 }
 </script>
 
+<!-- doing this so windows and stuff can go offscreen, while not extending the page-->
+<div id="desktop" style="position:fixed;left:0;top:0;width:100%;height:100%;overflow:hidden;">
 
 <!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
       at the request of a friend -->
-<marquee scrollamount="30" style="position:absolute;bottom:0px">
-<img src="http://farm4.static.flickr.com/3484/3696757249_d353f90a53_o.gif" style="cursor:pointer;" onClick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/notes.png');" width="139" height="200">
+<marquee scrollamount="10" style="position:absolute;bottom:45px">
+<img src="http://farm4.static.flickr.com/3484/3696757249_d353f90a53_o.gif" width="70" height="100">
 </marquee>
 
 <!-- where buttons go, for now -->
-<div align="center" style="position:absolute;bottom:5px;right:5px">
-<img src="assets/construction.gif"> <img src="assets/notepad.gif"> <img src="assets/css.gif"> <img src="assets/paws.gif"><br>
+<div align="center" style="position:absolute;bottom:50px;right:5px">
+<img src="assets/construction.gif" onclick="showReadme()"> <img src="assets/notepad.gif"> <img src="assets/css.gif"> <img src="assets/paws.gif"><br>
 <img src="assets/webpassion.gif"> <img src="assets/antinft.gif"> <img src="assets/gregg.gif"> <img src="assets/fuzzy.png">
+</div>
+
+<!--taskbar?-->
+<div id="taskbar" class="taskbar">
+  <span style="position:absolute;left:50px;top:50%;transform:translateY(-50%);">
+    <img class="taskbar-button" src="assets/notes.png" onclick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/notes.png');">&nbsp;
+    <img class="taskbar-button" src="assets/internet.png" onclick="CreateWindow('Internet', document.getElementById('browserTemplate'), 'assets/internet.png');">
+  </span>
+</div>
 
 </div>
 
@@ -142,30 +188,34 @@ function inet_loadPage(obj) {
 
 var windowId=0;
 var winTemp = document.getElementById("windowTemplate");
+var desktop = document.getElementById("desktop");
 var openWindowX = Math.round(window.innerWidth/6);
 var openWindowY = Math.round(window.innerHeight/6);
 
 highestWindow = 10;
 function makeMeHighest(element) {
-    if (!element.style.getPropertyValue('z-index') < highestWindow) {
+    if (element.style.getPropertyValue('z-index') < highestWindow) {
         highestWindow++;
         element.style.setProperty('z-index', highestWindow);
+	document.getElementById("taskbar").style.setProperty('z-index', highestWindow + 1);
     }
 }
 
-function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, bevel=false, contentStyle=null) {
+
+function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, parent=desktop) {
     var c = winTemp.content.cloneNode(true);
     var cdiv = c.querySelector("#tempwinid");
     var newId = "window"+windowId
     cdiv.id = newId;
-    document.body.appendChild(c);
-   
+    cdiv.classList.add('closed');
+    parent.appendChild(c);
+    
     var e = document.getElementById(newId);
     if (x == -1 || y == -1) {
         e.style.setProperty('--x', openWindowX+"px");
         e.style.setProperty('--y', openWindowY+"px");
-        openWindowX = (openWindowX + 30) % window.innerWidth;
-        openWindowY = (openWindowY + 30) % window.innerHeight;
+        openWindowX = (openWindowX + 30) % (window.innerWidth-70);
+        openWindowY = (openWindowY + 30) % (window.innerHeight-70);
     }
     else
     {
@@ -175,7 +225,7 @@ function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, bevel=false, c
     e.style.setProperty('--rot', rot);
     makeMeHighest(e);
     setTimeout(() => {e.classList.remove('closed');}, 100);
-    e.isDragging=false;
+    e.fullscreen=false;
     
     e.querySelector('.win-caption').innerHTML = title;
     e.querySelector('.win-icon').setAttribute('src', icon);
@@ -184,12 +234,59 @@ function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, bevel=false, c
     closeButton.window = e;
     closeButton.setAttribute("onClick", "this.window.classList.add('closed'); setTimeout(() => {this.window.remove();}, 200);");
     
+    var fullButton = e.querySelector('.fullscreen');
+    fullButton.window = e;
+    fullButton.setAttribute("onClick", "fullscreen(this.window)");
+
+    var minButton = e.querySelector('.minimize');
+    minButton.window = e;
+    minButton.setAttribute("onClick", "minimize(this.window)");
+    
     var contentDiv = e.querySelector('.win-content');
-    if(bevel) contentDiv.classList.add('wc-bevel');
     var cloneContent = content.content.cloneNode(true);
     contentDiv.appendChild(cloneContent);
     
     windowId++;
+}
+
+
+function fullscreen(e) {
+    // doesn't work completely right- the css doesn't cooperate very well
+    // this can and will be changed later but i just want baseline functionality at the moment
+    wc = e.querySelector('.win-content');
+    if (wc.hasAttribute("hidden")) return;
+    if (!e.fullscreen) {
+        var rect = wc.getBoundingClientRect();
+        e.oldx = rect.left; e.oldy = rect.top; e.oldw = rect.width; e.oldh = rect.height;
+        e.style.setProperty('--x', 0);
+        e.style.setProperty('--y', 0);
+        e.style.setProperty('--rot', 0);
+        wc.style.setProperty('width', window.innerWidth+'px');
+        wc.style.setProperty('height', (window.innerHeight-75)+'px');
+    }
+    else {
+        e.style.setProperty('--x', e.oldx + 'px');
+        e.style.setProperty('--y', e.oldy + 'px');
+        wc.style.setProperty('width', 'auto');
+        wc.style.setProperty('height', 'auto');
+    }
+    e.fullscreen = !e.fullscreen;
+}
+
+function minimize(e) {
+    wc = e.querySelector('.win-content');
+    cap = e.querySelector('.win-caption');
+    if (wc.hasAttribute("hidden"))
+    {
+        wc.removeAttribute("hidden");
+        //cap.style.setProperty("opacity", 1);
+	//cap.style.setProperty("scalex", "200%");
+    }
+    else {
+        wc.setAttribute("hidden", null);
+        //cap.style.setProperty("opacity", 0);
+	//cap.style.setProperty("scalex", "100%");
+    }
 }
 
 
@@ -214,7 +311,7 @@ function winDragStart(event) {
 }
 
 function winDragMove(event) {
-    if (isDragging) {
+    if (isDragging && !dragWindow.fullscreen) {
         dragWindow.style.setProperty('--x', event.clientX + dragWindow.offsetX + "px");
         dragWindow.style.setProperty('--y', event.clientY + dragWindow.offsetY + "px");
     }
@@ -232,9 +329,11 @@ document.onmousedown = winDragStart;
 document.onmousemove = winDragMove;
 document.onmouseup = winDragEnd;
 
+function showReadme() { CreateWindow("README.html", readTemp, "assets/internet.png", "10%", "200px", "-3deg"); }
+
 readTemp = document.getElementById("readmeTemplate");
-setTimeout(() => {CreateWindow("README.html", readTemp, "assets/internet.png", "10%", "200px", "-3deg", true);}, 500);
-setTimeout(() => {CreateWindow("Internet", document.getElementById("browserTemplate"), "assets/internet.png", "50%", "30%");}, 1000);
+setTimeout(showReadme, 500);
+//setTimeout(() => {CreateWindow("Internet", document.getElementById("browserTemplate"), "assets/internet.png", "50%", "50px");}, 1000);
 
 </script>
 
