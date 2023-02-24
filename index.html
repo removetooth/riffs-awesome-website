@@ -104,7 +104,7 @@
 
 <body bgcolor=0 text=ffffff>
 
-<div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.3;">
+<div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.3;z-index:2">
     last update 2/24/2023 - wip taskbar & very broken maximize/minimize
     <br><a style="color:#5050ff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github</a>
 </div>
@@ -160,7 +160,7 @@ function inet_loadPage(obj) {
 </script>
 
 <!-- doing this so windows and stuff can go offscreen, while not extending the page-->
-<div id="desktop" style="position:fixed;left:0;top:0;width:100%;height:100%;overflow:hidden;">
+<div id="desktop" style="position:fixed;left:0;top:0;width:100%;height:100%;overflow:hidden;z-index:1;">
 
 <!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
       at the request of a friend -->
