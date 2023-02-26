@@ -71,12 +71,6 @@
   vertical-align:bottom;
 }
 
-.taskbar-button {
-  border-width:3px;
-  border-style:outset;
-  border-color:darkgray;
-}
-
 .taskbar {
   position:absolute;
   bottom:0;
@@ -89,7 +83,26 @@
   border-color:white;
 }
 
+.taskbar-button {
+  border-width:3px;
+  border-style:outset;
+  border-color:darkgray;
+  background-color:lightgray;
+}
 .taskbar-button:active {
+  border-style:inset;
+  border-color:lightgray;
+  background-color:darkgray;
+}
+
+button {
+  font-family:Windows-Regular;
+  border-width:2px;
+  border-style:outset;
+  border-color:darkgray;
+  background-color:lightgray;
+}
+button:active {
   border-style:inset;
   border-color:lightgray;
   background-color:darkgray;
@@ -99,13 +112,20 @@
   user-select: none;
 }
 
+.paint-color-selector {
+  border-style:inset;
+  cursor:pointer;
+  background-color:var(--c);
+  border-color:lightgray;
+}
+
 </style>
 </head>
 
 <body bgcolor=0 text=ffffff>
 
 <div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.3;z-index:2">
-    last update 2/24/2023 - wip taskbar & very broken maximize/minimize
+    last update 2/26/2023 - paint!!!<br>(no icon or save yet, but you can still right-click save)
     <br><a style="color:#5050ff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github</a>
 </div>
 
@@ -159,6 +179,101 @@ function inet_loadPage(obj) {
 }
 </script>
 
+<!-- PAINT CODE AND STUFF!
+THIS IS REALLY BIG AND STUPID AND SHOULD HONESTLY GO INTO ITS OWN FILE!
+TODO: fix tabs vs spaces in javascript -->
+
+<template id="paintTemplate">
+  <div style="padding-top:3px;padding-bottom:3px;">&nbsp;
+  <span class="paint-color-selector" style="--c:black;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:darkgray;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:lightgray;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:white;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:red;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:orange;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:yellow;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:lime;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:green;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:cyan;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:blue;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:purple;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:violet;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector" style="--c:brown;" onclick="colorSelector(this);">&emsp;</span>
+  <input class="paint-size" style="width:45px;align:right;" type="number" min="1" value="3">
+  <button onclick="paintUndo(this.parentElement.parentElement.querySelector('.paint-window'))">Undo</button>
+  <button onclick="paintRedo(this.parentElement.parentElement.querySelector('.paint-window'))">Redo</button>
+  <button onclick="paintFillBG(this.parentElement.parentElement.querySelector('.paint-window'))">Set BG color</button><br>
+  </div>
+  <div class="wc-bevel">
+  <canvas class="paint-window" width="640" height="480" style="cursor:crosshair;background-color:white;vertical-align:bottom;" onmousedown="paintStart(this, event,  this.parentElement.parentElement.querySelector('.paint-size').value)" onmousemove="paint(this, event)" onmouseup="paintEnd(this, event)" onmouseleave="paint(this, event); paintEnd(this, event)"></canvas>
+  </div>
+</template>
+<script>
+function getRelativeMouse(bbox, event) {
+    return [ event.clientX - bbox.left, event.clientY - bbox.top ];
+}
+function drawLine(ctx, x1, y1, x2, y2) {
+	ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+}
+function drawCircle(ctx, x, y, d) {
+	ctx.beginPath();
+    ctx.arc(x, y, d/2, 0, Math.PI*2);
+    ctx.fill();
+}
+function paintStart(canvas, event, size=5) {
+	canvas.bbox = canvas.getBoundingClientRect();
+    canvas.ctx = canvas.getContext('2d')
+	canvas.redoStack = []
+	if(canvas.undoStack == undefined) {
+    	canvas.undoStack = []
+    }
+    canvas.isPainting = true;
+    var r = getRelativeMouse(canvas.bbox, event);
+    canvas.lastPosX = r[0];
+    canvas.lastPosY = r[1];
+    canvas.strokeSize = size;
+    canvas.undoStack.push(canvas.ctx.getImageData(0, 0, canvas.width, canvas.height));
+    paint(canvas, event, size);
+}
+function paint(canvas, event, size=null) {
+	if (!canvas.isPainting) return;
+    if (size == null) size = canvas.strokeSize;
+    var r = getRelativeMouse(canvas.bbox, event);
+    canvas.ctx.lineWidth = size;
+    drawLine(canvas.ctx, canvas.lastPosX, canvas.lastPosY, r[0], r[1]);
+    drawCircle(canvas.ctx, r[0], r[1], size);
+    canvas.lastPosX = r[0];
+    canvas.lastPosY = r[1];
+}
+function paintEnd(canvas, event) {
+	canvas.isPainting = false;
+}
+function colorSelector(element) {
+	var c = element.style.getPropertyValue("--c");
+    var ctx = element.parentElement.parentElement.querySelector('.paint-window').getContext('2d');
+	ctx.fillStyle = c; ctx.strokeStyle = c;
+}
+function paintUndo(canvas) {
+	if (canvas.undoStack.length <= 0) return;
+    canvas.redoStack.push(canvas.ctx.getImageData(0, 0, canvas.width, canvas.height));
+	canvas.ctx.putImageData(canvas.undoStack.pop(), 0, 0);
+}
+function paintRedo(canvas) {
+	if (canvas.redoStack.length <= 0) return;
+    canvas.undoStack.push(canvas.ctx.getImageData(0, 0, canvas.width, canvas.height));
+	canvas.ctx.putImageData(canvas.redoStack.pop(), 0, 0);
+}
+function paintFillBG(canvas) {
+	canvas.style.setProperty("background-color", canvas.ctx.fillStyle);
+}
+</script>
+
+<!-- END PAINT CODE -->
+
+
 <!-- doing this so windows and stuff can go offscreen, while not extending the page-->
 <div id="desktop" style="position:fixed;left:0;top:0;width:100%;height:100%;overflow:hidden;z-index:1;">
 
@@ -178,7 +293,8 @@ function inet_loadPage(obj) {
 <div id="taskbar" class="taskbar">
   <span style="position:absolute;left:50px;top:50%;transform:translateY(-50%);">
     <img class="taskbar-button" src="assets/notes.png" onclick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/notes.png');">&nbsp;
-    <img class="taskbar-button" src="assets/internet.png" onclick="CreateWindow('Internet', document.getElementById('browserTemplate'), 'assets/internet.png');">
+    <img class="taskbar-button" src="assets/internet.png" onclick="CreateWindow('Internet', document.getElementById('browserTemplate'), 'assets/internet.png');">&nbsp;
+    <img class="taskbar-button" src="assets/paint_ph.png" onclick="CreateWindow('Paint', document.getElementById('paintTemplate'), 'assets/paint_ph.png');">
   </span>
 </div>
 
