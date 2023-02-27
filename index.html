@@ -114,9 +114,14 @@ button:active {
 
 .paint-color-selector {
   border-style:inset;
+  border-color:lightgray;
+  border-width:3px;
   cursor:pointer;
   background-color:var(--c);
-  border-color:lightgray;
+}
+.paint-color-selector.selected {
+  border-style:solid;
+  border-color:black;
 }
 
 </style>
@@ -185,7 +190,7 @@ TODO: fix tabs vs spaces in javascript -->
 
 <template id="paintTemplate">
   <div style="padding-top:3px;padding-bottom:3px;">&nbsp;
-  <span class="paint-color-selector" style="--c:black;" onclick="colorSelector(this);">&emsp;</span>
+  <span class="paint-color-selector selected" style="--c:black;" onclick="colorSelector(this);">&emsp;</span>
   <span class="paint-color-selector" style="--c:darkgray;" onclick="colorSelector(this);">&emsp;</span>
   <span class="paint-color-selector" style="--c:lightgray;" onclick="colorSelector(this);">&emsp;</span>
   <span class="paint-color-selector" style="--c:white;" onclick="colorSelector(this);">&emsp;</span>
@@ -213,22 +218,22 @@ function getRelativeMouse(bbox, event) {
     return [ event.clientX - bbox.left, event.clientY - bbox.top ];
 }
 function drawLine(ctx, x1, y1, x2, y2) {
-	ctx.beginPath();
+    ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.stroke();
 }
 function drawCircle(ctx, x, y, d) {
-	ctx.beginPath();
+    ctx.beginPath();
     ctx.arc(x, y, d/2, 0, Math.PI*2);
     ctx.fill();
 }
 function paintStart(canvas, event, size=5) {
-	canvas.bbox = canvas.getBoundingClientRect();
+    canvas.bbox = canvas.getBoundingClientRect();
     canvas.ctx = canvas.getContext('2d')
-	canvas.redoStack = []
-	if(canvas.undoStack == undefined) {
-    	canvas.undoStack = []
+    canvas.redoStack = []
+    if(canvas.undoStack == undefined) {
+        canvas.undoStack = []
     }
     canvas.isPainting = true;
     var r = getRelativeMouse(canvas.bbox, event);
@@ -239,7 +244,7 @@ function paintStart(canvas, event, size=5) {
     paint(canvas, event, size);
 }
 function paint(canvas, event, size=null) {
-	if (!canvas.isPainting) return;
+    if (!canvas.isPainting) return;
     if (size == null) size = canvas.strokeSize;
     var r = getRelativeMouse(canvas.bbox, event);
     canvas.ctx.lineWidth = size;
@@ -249,25 +254,31 @@ function paint(canvas, event, size=null) {
     canvas.lastPosY = r[1];
 }
 function paintEnd(canvas, event) {
-	canvas.isPainting = false;
+    canvas.isPainting = false;
 }
 function colorSelector(element) {
-	var c = element.style.getPropertyValue("--c");
-    var ctx = element.parentElement.parentElement.querySelector('.paint-window').getContext('2d');
-	ctx.fillStyle = c; ctx.strokeStyle = c;
+    var cont = element.parentElement.parentElement;
+    var selectors = cont.querySelectorAll(".paint-color-selector");
+    for (var i=0; i < selectors.length; i++) {
+        selectors[i].classList.remove("selected");
+    }
+    element.classList.add("selected");
+    var col = element.style.getPropertyValue("--c");
+    var ctx = cont.querySelector('.paint-window').getContext('2d');
+    ctx.fillStyle = col; ctx.strokeStyle = col;
 }
 function paintUndo(canvas) {
-	if (canvas.undoStack.length <= 0) return;
+    if (canvas.undoStack.length <= 0) return;
     canvas.redoStack.push(canvas.ctx.getImageData(0, 0, canvas.width, canvas.height));
-	canvas.ctx.putImageData(canvas.undoStack.pop(), 0, 0);
+    canvas.ctx.putImageData(canvas.undoStack.pop(), 0, 0);
 }
 function paintRedo(canvas) {
-	if (canvas.redoStack.length <= 0) return;
+    if (canvas.redoStack.length <= 0) return;
     canvas.undoStack.push(canvas.ctx.getImageData(0, 0, canvas.width, canvas.height));
-	canvas.ctx.putImageData(canvas.redoStack.pop(), 0, 0);
+    canvas.ctx.putImageData(canvas.redoStack.pop(), 0, 0);
 }
 function paintFillBG(canvas) {
-	canvas.style.setProperty("background-color", canvas.ctx.fillStyle);
+    canvas.style.setProperty("background-color", canvas.ctx.fillStyle);
 }
 </script>
 
