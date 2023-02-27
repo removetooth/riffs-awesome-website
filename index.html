@@ -130,7 +130,7 @@ button:active {
 <body bgcolor=0 text=ffffff>
 
 <div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.3;z-index:2">
-    last update 2/26/2023 - paint!!!<br>(no icon or save yet, but you can still right-click save)
+    last update 2/27/2023 - minor update: paint now has a proper icon
     <br><a style="color:#5050ff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github</a>
 </div>
 
@@ -296,16 +296,16 @@ function paintFillBG(canvas) {
 
 <!-- where buttons go, for now -->
 <div align="center" style="position:absolute;bottom:50px;right:5px">
-<img src="assets/construction.gif" onclick="showReadme()"> <img src="assets/notepad.gif"> <img src="assets/css.gif"> <img src="assets/paws.gif"><br>
-<img src="assets/webpassion.gif"> <img src="assets/antinft.gif"> <img src="assets/gregg.gif"> <img src="assets/fuzzy.png">
+<img src="assets/buttons/construction.gif" onclick="showReadme()"> <img src="assets/buttons/notepad.gif"> <img src="assets/buttons/css.gif"> <img src="assets/buttons/paws.gif"><br>
+<img src="assets/buttons/webpassion.gif"> <img src="assets/buttons/antinft.gif"> <img src="assets/buttons/gregg.gif"> <img src="assets/buttons/fuzzy.png">
 </div>
 
 <!--taskbar?-->
 <div id="taskbar" class="taskbar">
   <span style="position:absolute;left:50px;top:50%;transform:translateY(-50%);">
-    <img class="taskbar-button" src="assets/notes.png" onclick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/notes.png');">&nbsp;
-    <img class="taskbar-button" src="assets/internet.png" onclick="CreateWindow('Internet', document.getElementById('browserTemplate'), 'assets/internet.png');">&nbsp;
-    <img class="taskbar-button" src="assets/paint_ph.png" onclick="CreateWindow('Paint', document.getElementById('paintTemplate'), 'assets/paint_ph.png');">
+    <img class="taskbar-button" src="assets/icons/notes.png" onclick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/icons/notes.png');">&nbsp;
+    <img class="taskbar-button" src="assets/icons/internet.png" onclick="CreateWindow('Internet', document.getElementById('browserTemplate'), 'assets/icons/internet.png');">&nbsp;
+    <img class="taskbar-button" src="assets/icons/paint.png" onclick="CreateWindow('Paint', document.getElementById('paintTemplate'), 'assets/icons/paint.png');">
   </span>
 </div>
 
@@ -456,11 +456,11 @@ document.onmousedown = winDragStart;
 document.onmousemove = winDragMove;
 document.onmouseup = winDragEnd;
 
-function showReadme() { CreateWindow("README.html", readTemp, "assets/internet.png", "10%", "200px", "-3deg"); }
+function showReadme() { CreateWindow("README.html", readTemp, "assets/icons/internet.png", "10%", "200px", "-3deg"); }
 
 readTemp = document.getElementById("readmeTemplate");
 setTimeout(showReadme, 500);
-//setTimeout(() => {CreateWindow("Internet", document.getElementById("browserTemplate"), "assets/internet.png", "50%", "50px");}, 1000);
+//setTimeout(() => {CreateWindow("Internet", document.getElementById("browserTemplate"), "assets/icons/internet.png", "50%", "50px");}, 1000);
 
 </script>
 
