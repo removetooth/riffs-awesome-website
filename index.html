@@ -37,6 +37,7 @@
 
 .win-caption {
   font-face:Windows-Regular;
+  color:white;
 }
 
 .win-dragbar {
@@ -124,13 +125,18 @@ button:active {
   border-color:black;
 }
 
+.winfont {
+  font-family:Windows-Regular;
+  color:black;
+}
+
 </style>
 </head>
 
 <body bgcolor=0 text=ffffff>
 
 <div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.3;z-index:2">
-    last update 2/27/2023 - minor update: paint now has a proper icon
+    last update 3/2/2023 - the guestbook! (part 1)
     <br><a style="color:#9e9eff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github</a>
 </div>
 
@@ -181,6 +187,56 @@ function inet_loadPage(obj) {
 	var bar = obj.querySelector(".inet-urlbar");
 	var frame = obj.querySelector(".win-xframe");
 	frame.setAttribute("src", bar.value);
+}
+</script>
+
+<template id="guestbookTemplate">
+    <div style="padding:10px">
+        <iframe width="350" height="200" class="gb-xframe wc-bevel" style="background-color:white" src="https://get.moist.live/guestbook.html"></iframe><br>
+        <div align="center">
+            <span class="winfont">Name: <input class="name-area winfont" type="text"></input><br>
+            Message: <br>
+            <textarea class="msg-area winfont" style="resize:none;width:95%;height:100px"></textarea><br></span>
+            <button onclick="sendGuestbook(this.parentElement.parentElement)">Send</button><br>
+            <span class="err-msg winfont" style="color:red;" hidden></font>
+        </div>
+    </div>
+</template>
+<script>
+const GUESTBOOK_WS_URL = 'wss://get.moist.live:24000';
+function sendGuestbook(win) {
+    var nameArea = win.querySelector(".name-area");
+    var msgArea = win.querySelector(".msg-area");
+    var errArea = win.querySelector(".err-msg");
+    var gbFrame = win.querySelector(".gb-xframe");
+    
+    var socket = new WebSocket(GUESTBOOK_WS_URL);
+    socket.addEventListener("error", (event) => {
+        errArea.innerHTML = "Error communicating with backend";
+        errArea.removeAttribute("hidden");
+        socket.close();
+    });
+    socket.addEventListener("open", (event) => {
+        socket.send(JSON.stringify(
+            {
+            "name": nameArea.value,
+            "msg": msgArea.value
+            }
+        ));
+    });
+    socket.addEventListener("message", (event) => {
+        if (event.data == "OK") {
+            console.log("got OK from backend, reloading");
+            socket.close();
+            gbFrame.src += "";
+        }
+	else {
+            console.error("Got non-OK message from backend: " + event.data);
+            errArea.innerHTML = event.data;
+            errArea.removeAttribute("hidden");
+            socket.close();
+	}
+    });
 }
 </script>
 
@@ -306,6 +362,7 @@ function paintFillBG(canvas) {
     <img class="taskbar-button" src="assets/icons/notes.png" onclick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/icons/notes.png');">&nbsp;
     <img class="taskbar-button" src="assets/icons/internet.png" onclick="CreateWindow('Internet', document.getElementById('browserTemplate'), 'assets/icons/internet.png');">&nbsp;
     <img class="taskbar-button" src="assets/icons/paint.png" onclick="CreateWindow('Paint', document.getElementById('paintTemplate'), 'assets/icons/paint.png');">
+    <img class="taskbar-button" src="assets/icons/placeholder.png" onclick="CreateWindow('Guestbook', document.getElementById('guestbookTemplate'), 'assets/icons/placeholder.png');">
   </span>
 </div>
 
