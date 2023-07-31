@@ -135,9 +135,9 @@ button:active {
 
 <body bgcolor=0 text=ffffff>
 
-<div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.3;z-index:2">
-    last update 3/2/2023 - the guestbook! (part 1)
-    <br><a style="color:#9e9eff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github</a>
+<div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.6;z-index:2;background-color:black;padding:5px">
+    last update 7/30/2023 - a wallpaper! i guess<br>sorry for not touching in a while :(<br>still figuring out how to go about guestbook part 2
+    <br><a style="color:#9e9eff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github!</a>
 </div>
 
 <!--<div style="position:absolute;top:0;left:25%;height:200%;width:50%;background-color:#202020;"></div>-->
@@ -344,6 +344,10 @@ function paintFillBG(canvas) {
 <!-- doing this so windows and stuff can go offscreen, while not extending the page-->
 <div id="desktop" style="position:fixed;left:0;top:0;width:100%;height:100%;overflow:hidden;z-index:1;">
 
+<img src="assets/wallpaper720.png" style="position:absolute;image-rendering:pixelated;height:100%;width:100%;object-fit:cover;">
+<!-- bit of visual clash so i'm going to try to darken the wallpaper a bit -->
+<div style="position:absolute;height:100%;width:100%;background-color:black;opacity:0.07;"></div>
+
 <!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
       at the request of a friend -->
 <marquee scrollamount="10" style="position:absolute;bottom:45px">
@@ -362,7 +366,7 @@ function paintFillBG(canvas) {
     <img class="taskbar-button" src="assets/icons/notes.png" onclick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/icons/notes.png');">&nbsp;
     <img class="taskbar-button" src="assets/icons/internet.png" onclick="CreateWindow('Internet', document.getElementById('browserTemplate'), 'assets/icons/internet.png');">&nbsp;
     <img class="taskbar-button" src="assets/icons/paint.png" onclick="CreateWindow('Paint', document.getElementById('paintTemplate'), 'assets/icons/paint.png');">
-    <img class="taskbar-button" src="assets/icons/placeholder.png" onclick="CreateWindow('Guestbook', document.getElementById('guestbookTemplate'), 'assets/icons/placeholder.png');">
+    <img class="taskbar-button" src="assets/icons/guestbook.png" onclick="CreateWindow('Guestbook', document.getElementById('guestbookTemplate'), 'assets/icons/guestbook.png');">
   </span>
 </div>
 
