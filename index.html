@@ -89,11 +89,63 @@
   border-style:outset;
   border-color:darkgray;
   background-color:lightgray;
+  #image-rendering:pixelated;
 }
 .taskbar-button:active {
   border-style:inset;
   border-color:lightgray;
   background-color:darkgray;
+}
+
+.fileico {
+  position:relative;
+  font-family:Windows-Regular;
+  color:white;
+  width:64px;
+  border-style:dashed;
+  border-width:1px;
+  border-color:transparent;
+  text-align:center;
+}
+
+.fileico img {
+  width:48px;
+  image-rendering:pixelated;
+  background-color:transparent;
+}
+
+.fileico img:active {
+  position:relative;
+  top:2px;
+  left:1px;
+  height:fit-content;
+}
+
+input:checked + label .fileico {
+  border-color:white
+}
+
+.updatebox {
+  font-family:comic_sans;
+  font-size:small;
+  color:white;
+  opacity:0.6;
+  z-index:2;
+  background-color:black;
+  padding:0px;
+  border-color:black;
+  border-width:5px;
+  border-style:solid;
+  transition: padding 500ms, border-width 500ms, opacity 500ms;
+}
+
+.updatebox.vanish {
+  color:transparent;
+  background-color:transparent;
+  border-width:0px;
+  padding:5px;
+  opacity:0%;
+  pointer-events: none;
 }
 
 button {
@@ -129,19 +181,22 @@ button:active {
   font-family:Windows-Regular;
   color:black;
 }
+.winfont.white {
+  color:white;
+}
 
 </style>
 </head>
 
 <body bgcolor=0 text=ffffff>
 
-<div align="right" style="position:absolute;right:10px;font-family:comic_sans;font-size:small;color:white;opacity:0.6;z-index:2;background-color:black;padding:5px">
-    last update 7/30/2023 - a wallpaper! i guess<br>sorry for not touching in a while :(<br>still figuring out how to go about guestbook part 2
+<div id="updatebox" align="right" class="updatebox" style="position:absolute;right:10px;">
+    <span class="win-bar-button" style="position:absolute; left:6px; top:2px; --color:#ff5050" onclick="parentElement.classList.add('vanish');">🗙</span>
+    last update 2/7/2024 - <br>...games? (godot demo showoff)<br>^^^ also a little X button for this dialog&emsp;&emsp;&emsp;<br>still too lazy to push the guestbook backend, mb
     <br><a style="color:#9e9eff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github!</a>
 </div>
 
 <!--<div style="position:absolute;top:0;left:25%;height:200%;width:50%;background-color:#202020;"></div>-->
-
 
 <template id="windowTemplate">
 <div class="fpopup closed" id="tempwinid" onmousedown="makeMeHighest(this);">
@@ -159,7 +214,7 @@ button:active {
 </template>
 
 <template id="readmeTemplate">
-    <div class="wc-bevel" style="width:450px;height:230px;">
+    <div class="wc-bevel" style="width:450px;height:280px;">
         <iframe onmousemove="winDragMove(event);" class="win-xframe" src="README.html" style="width:inherit;height:inherit;"></iframe>
     </div>
 </template>
@@ -170,6 +225,19 @@ button:active {
     </div>
 </template>
 
+<template id="explorerTemplate_games">
+  <div class="wc-bevel" style="padding:20px;width:320px;height:200px;display:inline-flex;flex-direction:row;">
+    <div class="fileico">
+      <img src="assets/icons/super_perlin_11.png" ondblclick="window.location.href = 'https://get.moist.live/game/shadertest'"/><br>
+      <span class="noselect winfont">(DEMO) shadertest</span>
+    </div>&emsp;
+    
+    <div class="fileico">
+      <img src="assets/icons/navmesh.png" ondblclick="window.location.href = 'https://get.moist.live/game/navmeshtest'"/><br>
+      <span class="noselect winfont">(DEMO) navmeshtest</span>
+    </div>
+  </div>
+</template>
 
 <template id="browserTemplate">
     <input style="font-family:Windows-Regular;width:80%" type="text" class="inet-urlbar" value="https://">
@@ -348,10 +416,22 @@ function paintFillBG(canvas) {
 <!-- bit of visual clash so i'm going to try to darken the wallpaper a bit -->
 <div style="position:absolute;height:100%;width:100%;background-color:black;opacity:0.07;"></div>
 
+<!-- desktop icons -->
+
+<input type="radio" id="desktopico_games" name="desktopicon" hidden />
+<label for="desktopico_games">
+  <div align="center" class="fileico" style="top:25px;left:25px">
+    <img src="assets/icons/gameico.png" ondblclick="CreateWindow('Games', document.getElementById('explorerTemplate_games'), 'assets/icons/gameico.png');"/><br>
+    <span class="noselect">Games</span>
+  </div>
+</label>
+
+<input type="radio" name="desktopicon" checked hidden />
+
 <!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
       at the request of a friend -->
 <marquee scrollamount="10" style="position:absolute;bottom:45px">
-<img src="http://farm4.static.flickr.com/3484/3696757249_d353f90a53_o.gif" width="70" height="100">
+<img src="assets/kitty.gif" width="70" height="100">
 </marquee>
 
 <!-- where buttons go, for now -->
@@ -365,7 +445,7 @@ function paintFillBG(canvas) {
   <span style="position:absolute;left:50px;top:50%;transform:translateY(-50%);">
     <img class="taskbar-button" src="assets/icons/notes.png" onclick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/icons/notes.png');">&nbsp;
     <img class="taskbar-button" src="assets/icons/internet.png" onclick="CreateWindow('Internet', document.getElementById('browserTemplate'), 'assets/icons/internet.png');">&nbsp;
-    <img class="taskbar-button" src="assets/icons/paint.png" onclick="CreateWindow('Paint', document.getElementById('paintTemplate'), 'assets/icons/paint.png');">
+    <img class="taskbar-button" src="assets/icons/paint.png" onclick="CreateWindow('Paint', document.getElementById('paintTemplate'), 'assets/icons/paint.png');">&nbsp;
     <img class="taskbar-button" src="assets/icons/guestbook.png" onclick="CreateWindow('Guestbook', document.getElementById('guestbookTemplate'), 'assets/icons/guestbook.png');">
   </span>
 </div>
@@ -517,7 +597,7 @@ document.onmousedown = winDragStart;
 document.onmousemove = winDragMove;
 document.onmouseup = winDragEnd;
 
-function showReadme() { CreateWindow("README.html", readTemp, "assets/icons/internet.png", "10%", "200px", "-3deg"); }
+function showReadme() { CreateWindow("README.html", readTemp, "assets/icons/internet.png", "15%", "150px", "-3deg"); }
 
 readTemp = document.getElementById("readmeTemplate");
 setTimeout(showReadme, 500);
