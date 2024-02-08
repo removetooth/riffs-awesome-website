@@ -414,7 +414,7 @@ function paintFillBG(canvas) {
 
 <img src="assets/wallpaper720.png" style="position:absolute;image-rendering:pixelated;height:100%;width:100%;object-fit:cover;">
 <!-- bit of visual clash so i'm going to try to darken the wallpaper a bit -->
-<div style="position:absolute;height:100%;width:100%;background-color:black;opacity:0.07;"></div>
+<div style="position:absolute;height:100%;width:100%;background-color:black;opacity:0.07;" onclick="document.getElementById('desktopico_none').checked=true"></div>
 
 <!-- desktop icons -->
 
@@ -426,7 +426,7 @@ function paintFillBG(canvas) {
   </div>
 </label>
 
-<input type="radio" name="desktopicon" checked hidden />
+<input type="radio" id="desktopico_none" name="desktopicon" checked hidden />
 
 <!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
       at the request of a friend -->
