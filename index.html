@@ -22,6 +22,12 @@
   src: url("fonts/Windows-Regular.woff") format('woff');
 }
 
+body {
+  user-select:none;
+  font-family:Windows-Regular;
+  color:black;
+}
+
 .fpopup {
   transform: rotate(var(--rot)) scale(100%, 100%);
   transition: transform 70ms;
@@ -36,7 +42,6 @@
 }
 
 .win-caption {
-  font-face:Windows-Regular;
   color:white;
 }
 
@@ -99,8 +104,6 @@
 
 .fileico {
   position:relative;
-  font-family:Windows-Regular;
-  color:white;
   width:64px;
   border-style:dashed;
   border-width:1px;
@@ -178,14 +181,6 @@ button:active {
   border-color:black;
 }
 
-.winfont {
-  font-family:Windows-Regular;
-  color:black;
-}
-.winfont.white {
-  color:white;
-}
-
 </style>
 </head>
 
@@ -208,7 +203,7 @@ button:active {
             <span class="win-bar-button fullscreen" style="--color:#00d000">&#x1F5D6;</span>
             <span class="win-bar-button popupclose" style="--color:#ff5050;">&#x1F5D9;</span>
         </div>
-        <font class="win-caption" size="3" style="font-family:Windows-Regular;">Untitled</font>
+        <font class="win-caption" size="3">Untitled</font>
     </div>
     <div class="win-content"></div>
 </div>
@@ -222,7 +217,7 @@ button:active {
 
 <template id="notepadTemplate">
     <div class="wc-bevel">
-        <textarea style="width:300px;height:200px;border-width:0;font-family:Windows-Regular"></textarea>
+        <textarea style="width:300px;height:200px;border-width:0"></textarea>
     </div>
 </template>
 
@@ -230,26 +225,26 @@ button:active {
   <div class="wc-bevel" style="padding:20px;width:320px;height:200px;display:inline-flex;flex-direction:row;">
     <div class="fileico">
       <img src="assets/icons/super_perlin_11.png" ondblclick="window.location.href = 'https://get.moist.live/game/shadertest'"/><br>
-      <span class="noselect winfont">(DEMO) shadertest</span>
+      (DEMO) shadertest
     </div>&emsp;
     
     <div class="fileico">
       <img src="assets/icons/navmesh.png" ondblclick="window.location.href = 'https://get.moist.live/game/navmeshtest'"/><br>
-      <span class="noselect winfont">(DEMO) navmeshtest</span>
+      (DEMO) navmeshtest
     </div>
   </div>
 </template>
 
 <template id="browserTemplate">
-    <input style="font-family:Windows-Regular;width:80%" type="text" class="inet-urlbar" value="https://">
-    <button style="font-family:Windows-Regular;width:5%" onclick="inet_loadPage(this.parentElement);">Go!</button>
-    <button style="font-family:Windows-Regular;width:5%" onclick="window.history.back()">&lt;-</button>
-    <button style="font-family:Windows-Regular;width:5%" onclick="window.history.forward()">-&gt;</button>
+    <input style="width:80%" type="text" class="inet-urlbar" value="https://">
+    <button style="width:5%" onclick="inet_loadPage(this.parentElement);">Go!</button>
+    <button style="width:5%" onclick="window.history.back()">&lt;-</button>
+    <button style="width:5%" onclick="window.history.forward()">-&gt;</button>
     <br>
     <div class="wc-bevel" style="width:640px;height:480px;resize:both;overflow:auto;">
         <iframe src="inet-disclaimer.html" class="win-xframe" style="width:inherit;height:inherit"></iframe>
     </div>
-    <marquee scrollamount="10" style="font-family:Windows-Regular;color:black;width:100%">Sometimes it's nice to step back and explore the wider web.</marquee>
+    <marquee scrollamount="10" style="color:black;width:100%">Sometimes it's nice to step back and explore the wider web.</marquee>
 </template>
 <script>
 function inet_loadPage(obj) {
@@ -263,11 +258,11 @@ function inet_loadPage(obj) {
     <div style="padding:10px">
         <iframe width="350" height="200" class="gb-xframe wc-bevel" style="background-color:white" src="https://get.moist.live/guestbook.html"></iframe><br>
         <div align="center">
-            <span class="winfont">Name: <input class="name-area winfont" type="text"></input><br>
+            Name: <input class="name-area" type="text"></input><br>
             Message: <br>
-            <textarea class="msg-area winfont" style="resize:none;width:95%;height:100px"></textarea><br></span>
+            <textarea class="msg-area" style="resize:none;width:95%;height:100px"></textarea><br>
             <button onclick="sendGuestbook(this.parentElement.parentElement)">Send</button><br>
-            <span class="err-msg winfont" style="color:red;" hidden></font>
+            <span class="err-msg" style="color:red;" hidden></font>
         </div>
     </div>
 </template>
@@ -413,9 +408,9 @@ function paintFillBG(canvas) {
 <!-- doing this so windows and stuff can go offscreen, while not extending the page-->
 <div id="desktop" style="position:fixed;left:0;top:0;width:100%;height:100%;overflow:hidden;z-index:1;">
 
-<img src="assets/wallpaper720.png" style="position:absolute;image-rendering:pixelated;height:100%;width:100%;object-fit:cover;user-select:none;">
+<img src="assets/wallpaper720.png" style="position:absolute;image-rendering:pixelated;height:100%;width:100%;object-fit:cover;">
 <!-- bit of visual clash so i'm going to try to darken the wallpaper a bit -->
-<div style="position:absolute;height:100%;width:100%;background-color:black;opacity:0.07;user-select:none;" onclick="document.getElementById('desktopico_none').checked=true"></div>
+<div style="position:absolute;height:100%;width:100%;background-color:black;opacity:0.07;" onclick="document.getElementById('desktopico_none').checked=true"></div>
 
 <!-- desktop icons -->
 
@@ -423,7 +418,7 @@ function paintFillBG(canvas) {
 <label for="desktopico_games">
   <div align="center" class="fileico" style="top:25px;left:25px">
     <img src="assets/icons/gameico.png" ondblclick="CreateWindow('Games', document.getElementById('explorerTemplate_games'), 'assets/icons/gameico.png');"/><br>
-    <span class="noselect" style="padding:0px 3px;background-color:#00000040">Games</span>
+    <span style="padding:0px 3px;background-color:#00000040;color:white">Games</span>
   </div>
 </label>
 
@@ -438,8 +433,16 @@ function paintFillBG(canvas) {
 <!-- where buttons go, for now -->
 <div align="center" style="position:absolute;bottom:50px;right:5px">
 <img src="assets/buttons/construction.gif" onclick="showReadme()"> <img src="assets/buttons/notepad.gif"> <img src="assets/buttons/css.gif"> <img src="assets/buttons/paws.gif"><br>
-<img src="assets/buttons/webpassion.gif"> <img src="assets/buttons/antinft.gif"> <img src="assets/buttons/gregg.gif"> <img src="assets/buttons/fuzzy.png">
+<img src="assets/buttons/webpassion.gif"> <img src="assets/buttons/antinft.gif"> <img src="assets/buttons/gregg.gif" style="cursor:pointer" onclick="gregg()"> <img src="assets/buttons/fuzzy.png">
 </div>
+
+<script>
+var greggs = []
+for (i=1; i<=8; i++) greggs.push(new Audio(`assets/sound/h${i}.mp3`));
+function gregg() {
+	greggs[Math.floor(Math.random() * greggs.length)].play();
+}
+</script>
 
 <!--taskbar?-->
 <div id="taskbar" class="taskbar">
