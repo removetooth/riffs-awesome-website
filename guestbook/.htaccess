@@ -1,0 +1,3 @@
+<Files "guestbook.html">
+    Header set Cache-Control: no-cache
+</Files>

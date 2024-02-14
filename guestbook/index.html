@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Guestbook</title>
+<link rel="stylesheet" href="guestbook.css">
+<!-- futile, but pretty harmless to leave in: -->
+<meta http-Equiv="Cache-Control" Content="no-cache" />
+<meta http-Equiv="Pragma" Content="no-cache" /> 
+<meta http-Equiv="Expires" Content="0" />
+</head>
+<body>
+
+<div class="gb-header"><b>SHOUT INTO THE VOID</b></div>
+
+<!-- NEXT ENTRY HERE -->
+	
+<script>
+var times = document.getElementsByClassName("timestamp");
+for (var i=0; i < times.length; i++) {
+	var ts_raw = times[i].innerHTML;
+    times[i].innerHTML = new Date(ts_raw*1000).toLocaleString();
+}
+</script>
+
+</body>
+</html>

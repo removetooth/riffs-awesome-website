@@ -1,0 +1,52 @@
+@font-face {
+  font-family: "Windows-Regular";
+  src: url("../fonts/Windows-Regular.woff");
+}
+
+body {
+  background-color: black;
+  color: white;
+  background-image: url('../assets/perlin_fx/flame_pixel.gif');
+  background-attachment: fixed;
+}
+
+.gb-header {
+  font-family: Windows-Regular;
+  padding: 5px;
+  background-color: black;
+  margin: 5px;
+  padding-inline: 15px;
+  border: solid;
+  border-radius: 7px;
+  border-color:white;
+  overflow: hidden;
+  color:red;
+  font-size:110%;
+  text-align:center;
+}
+
+.gb-entry {
+  font-family: Windows-Regular;
+  padding: 5px;
+  background-color: black;
+  margin: 5px;
+  padding-inline: 15px;
+  border: solid;
+  border-radius: 7px;
+  border-color:white;
+  overflow: hidden;
+}
+
+.gb-name {
+  font-size:110%;
+}
+
+.timestamp {
+  font-size:70%;
+  padding-left:7px;
+  color:gray;
+}
+
+.gb-message {
+  color:lightgray;
+}
