@@ -11,7 +11,7 @@ THROTTLE_DECAY = 60 # interval at which the bucket refills, in seconds
 
 MESSAGE_TIMEOUT = 5
 
-FILENAME = "guestbook.html"
+FILENAME = "index.html"
 NEXT_ENTRY_MARKER = "<!-- NEXT ENTRY HERE -->"
 ENTRY_HTML = """{next_entry}
 <div class="gb-entry">
