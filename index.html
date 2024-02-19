@@ -41,13 +41,22 @@ input {
   transform: rotate(var(--rot)) scale(100%, 100%);
   transition: transform 70ms;
   background-color:lightgray;
-  border-width:3.5px;
-  border-style:outset;
-  border-color:darkgray;
   width:fit-content;
   position:absolute;
   top: var(--y);
   left: var(--x);
+}
+
+.wc-outset, .fpopup, .dropdown .menu {
+  border-width:3.5px;
+  border-style:outset;
+  border-color:darkgray;
+}
+
+.wc-bevel {
+  border-width:3.5px;
+  border-style:inset;
+  border-color:lightgray;
 }
 
 .win-caption {
@@ -67,12 +76,6 @@ input {
 
 .win-bar-button:hover {
   color: var(--color);
-}
-
-.wc-bevel {
-  border-width:3.5px;
-  border-style:inset;
-  border-color:lightgray;
 }
 
 .fpopup.closed {
@@ -174,6 +177,41 @@ button:active {
   background-color:darkgray;
 }
 
+.dropdown {
+  background-color:lightgray;
+  padding:0px 4px;
+  user-select:none;
+}
+
+.dropdown:hover, .dropdown.open {
+  background-color:darkgray;
+}
+
+.dropdown .menu {
+  background-color:lightgray;
+  display:none;
+  position:absolute;
+  margin-top:calc(1em + 3px);
+  margin-left:-25px;
+  padding:2px 0px;
+  padding-right:10px;
+}
+
+.dropdown.open .menu {
+  display:inherit;
+}
+
+.menu .item {
+  padding:2px 0px;
+  padding-left:3px;
+  padding-right:10px;
+  width:calc(100% - 3px);
+}
+
+.menu .item:hover {
+  background-color:darkgray;
+}
+
 .noselect {
   user-select: none;
 }
@@ -198,7 +236,7 @@ button:active {
 
 <div id="updatebox" align="right" class="updatebox" style="position:absolute;right:10px;">
     <span class="win-bar-button" style="position:absolute; left:6px; top:2px; --color:#ff5050" onclick="parentElement.classList.add('vanish');">&#x1F5D9;</span>
-    last update 2/14/2024 - no user facing changes today,<br \>but i finally published the guestbook code after about a year
+    last update 2/14/2024 -<br>notepad can open files now :)<br>(menu bar is very wip)
     <br><a style="color:#9e9eff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github!</a>
 </div>
 
@@ -226,10 +264,30 @@ button:active {
 </template>
 
 <template id="notepadTemplate">
-    <div class="wc-bevel">
-        <textarea style="width:300px;height:200px;border-width:0"></textarea>
+  <span class="dropdown" onclick="classList.toggle('open')">
+    File
+    <div class="menu" onmouseleave="parentElement.classList.remove('open')">
+      <div class="item" onclick="np_textArea(this).value = ''">New...</div>
+      <div class="item" onclick="np_open(this)">Open...<input type="file" hidden /></div>
+      <div class="item" hidden>Save As...</div>
     </div>
+  </span>
+  <br><textarea class="wc-bevel" style="width:300px;height:200px;"></textarea>
 </template>
+<script>
+function np_textArea(me) {
+  return me.parentElement.parentElement.parentElement.querySelector("textarea"); //there's GOTTA be a better way to do this
+}
+
+function np_open(me) {
+  ta = np_textArea(me);
+  fileSel = me.querySelector("input");
+  fr = new FileReader();
+  fileSel.onchange = () => { fr.readAsText(fileSel.files[0])};
+  fr.onload = (e) => {ta.value = e.target.result};
+  fileSel.click();
+}
+</script>
 
 <template id="explorerTemplate_games">
   <div class="wc-bevel" style="padding:20px;width:320px;height:200px;display:inline-flex;flex-direction:row;">
@@ -525,8 +583,11 @@ function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, parent=desktop
     minButton.setAttribute("onClick", "minimize(this.window)");
     
     var contentDiv = e.querySelector('.win-content');
-    var cloneContent = content.content.cloneNode(true);
-    contentDiv.appendChild(cloneContent);
+    if (content.innerHTML != undefined) {
+	var cloneContent = content.content.cloneNode(true);
+	contentDiv.appendChild(cloneContent);
+    }
+    else contentDiv.innerHTML = content.replaceAll("{ID}", newID);
     
     windowId++;
 }
