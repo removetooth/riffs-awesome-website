@@ -28,6 +28,7 @@ body {
   user-select:none;
   font-family:Windows-Regular;
   color:black;
+  cursor: url('assets/cursor.png'), default;
 }
 
 textarea {
@@ -684,7 +685,7 @@ function winDragMove(event) {
 
 function winDragEnd(event) {
     isDragging = false;
-    dragWindow.style.setProperty('cursor', 'auto');
+    dragWindow.style.setProperty('cursor', 'inherit');
     document.body.classList.remove("noselect");
     var frames = dragWindow.querySelectorAll(".win-xframe")
     for (i=0; i<frames.length; i++) {frames[i].hidden = false;}
