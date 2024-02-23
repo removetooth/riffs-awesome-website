@@ -45,6 +45,12 @@ input {
   position:absolute;
   top: var(--y);
   left: var(--x);
+  --wminus:0px;
+  --hminus:0px;
+}
+
+.win-content {
+  transition: transform 150ms;
 }
 
 .wc-outset, .fpopup, .dropdown .menu {
@@ -80,6 +86,41 @@ input {
 
 .fpopup.closed {
   transform: rotate(var(--rot)) scale(100%, 0%);
+}
+
+.fpopup.minimized .win-content {
+  height: 0px;
+  transform: scale(100%, 0%);
+}
+
+.fpopup.fullscreen {
+  transform: rotate(0deg) scale(100%, 100%);
+  top:0px;
+  left:0px;
+  width:calc(100% - 6px);
+  height:calc(100% - 53px);
+}
+
+.fpopup.fullscreen .win-content {
+  width:calc(100% - var(--wminus));
+  height:calc(100% - 25px - var(--hminus));
+  transform: scale(100%, 100%);
+}
+
+.fpopup .fullscreen-scale {
+  width:var(--w);
+  height:var(--h);
+}
+
+.fpopup.fullscreen .fullscreen-scale {
+  position:relative;
+  width:calc(100% - var(--wminus));
+  height:calc(100% - var(--hminus));
+}
+
+.fpopup.fullscreen .fullscreen-scale.wc-bevel, .fpopup.fullscreen .fullscreen-scale.wc-outset {
+  width:calc(100% - 6px - var(--wminus));
+  height:calc(100% - 6px - var(--hminus));
 }
 
 .win-xframe {
@@ -199,6 +240,7 @@ button:active {
 
 .dropdown.open .menu {
   display:inherit;
+  z-index:2;
 }
 
 .menu .item {
@@ -236,7 +278,7 @@ button:active {
 
 <div id="updatebox" align="right" class="updatebox" style="position:absolute;right:10px;">
     <span class="win-bar-button" style="position:absolute; left:6px; top:2px; --color:#ff5050" onclick="parentElement.classList.add('vanish');">&#x1F5D9;</span>
-    last update 2/19/2024 -<br>notepad can open files now :)<br>(menu bar is very wip)
+    last update 2/23/2024<br>-------<br>fullscreen & minimize work properly!<br>lots of css, very fun<br>also notepad can save files now
     <br><a style="color:#9e9eff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github!</a>
 </div>
 
@@ -258,21 +300,27 @@ button:active {
 </template>
 
 <template id="readmeTemplate">
-    <div class="wc-bevel" style="width:450px;height:280px;">
+    <div class="wc-bevel fullscreen-scale" style="--w:450px;--h:280px;">
         <iframe onmousemove="winDragMove(event);" class="win-xframe" src="README.html" style="width:inherit;height:inherit;"></iframe>
     </div>
 </template>
 
 <template id="notepadTemplate">
-  <span class="dropdown" onclick="classList.toggle('open')">
+  <span class="dropdown" onclick="classList.toggle('open')" onmouseleave="classList.remove('open')">
     File
-    <div class="menu" onmouseleave="parentElement.classList.remove('open')">
-      <div class="item" onclick="np_textArea(this).value = ''">New...</div>
+    <div class="menu">
+      <div class="item" onclick="np_textArea(this).value = ''">New</div>
       <div class="item" onclick="np_open(this)">Open...<input type="file" hidden /></div>
-      <div class="item" hidden>Save As...</div>
+      <div class="item" onclick="np_save(this)">Save<a href="" hidden></a></div>
     </div>
   </span>
-  <br><textarea class="wc-bevel" style="width:300px;height:200px;"></textarea>
+  <span class="dropdown" onclick="classList.toggle('open')" onmouseleave="classList.remove('open')">
+    Edit
+    <div class="menu">
+      <div class="item">(there's nothing here yet)</div>
+    </div>
+  </span>
+  <br><textarea spellcheck="false" class="wc-bevel fullscreen-scale" style="--w:300px;--h:200px;--wminus:9px;--hminus:calc(1em + 12px);"></textarea>
 </template>
 <script>
 function np_textArea(me) {
@@ -284,13 +332,28 @@ function np_open(me) {
   fileSel = me.querySelector("input");
   fr = new FileReader();
   fileSel.onchange = () => { fr.readAsText(fileSel.files[0])};
-  fr.onload = (e) => {ta.value = e.target.result};
+  fr.onload = (e) => {
+    ta.value = e.target.result;
+    ta.filename = fileSel.files[0].name;
+    titlebar = ta.parentElement.parentElement.querySelector(".win-caption");
+    titlebar.innerHTML = escape(ta.filename) + " - Notepad";
+  };
   fileSel.click();
+}
+
+function np_save(me) {
+  ta = np_textArea(me);
+  a = me.querySelector("a");
+  a.href = "data:text," + escape(ta.value);
+  if (ta.filename == undefined)
+    ta.filename = "Untitled.txt";
+  a.download = ta.filename;
+  a.click()
 }
 </script>
 
 <template id="explorerTemplate_games">
-  <div class="wc-bevel" style="padding:20px;width:320px;height:200px;display:inline-flex;flex-direction:row;">
+  <div class="wc-bevel fullscreen-scale" style="padding:20px;--w:320px;--h:200px;display:inline-flex;flex-direction:row;">
     <div class="fileico">
       <img src="assets/icons/super_perlin_11.png" ondblclick="window.location.href = 'https://get.moist.live/game/shadertest'"/><br>
       (DEMO) shadertest
@@ -309,7 +372,7 @@ function np_open(me) {
     <button style="width:5%" onclick="window.history.back()">&lt;-</button>
     <button style="width:5%" onclick="window.history.forward()">-&gt;</button>
     <br>
-    <div class="wc-bevel" style="width:640px;height:480px;resize:both;overflow:auto;">
+    <div class="wc-bevel fullscreen-scale" style="--w:640px;--h:480px;--hminus:3em;resize:both;overflow:auto;">
         <iframe src="inet-disclaimer.html" class="win-xframe" style="width:inherit;height:inherit"></iframe>
     </div>
     <marquee scrollamount="10" style="color:black;width:100%">Sometimes it's nice to step back and explore the wider web.</marquee>
@@ -323,8 +386,8 @@ function inet_loadPage(obj) {
 </script>
 
 <template id="guestbookTemplate">
-    <div style="padding:10px">
-        <iframe width="350" height="200" class="gb-xframe wc-bevel" style="background-color:white" src="https://get.moist.live/guestbook"></iframe><br>
+    <div class="fullscreen-scale" style="padding:10px;--wminus:10px;--hminus:calc(10px + 6em)">
+        <iframe class="gb-xframe wc-bevel fullscreen-scale" style="background-color:white;--w:350px;--h:200px;" src="https://get.moist.live/guestbook"></iframe><br>
         <div align="center">
             Name: <input class="name-area" type="text"></input><br>
             Message: <br>
@@ -576,11 +639,11 @@ function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, parent=desktop
     
     var fullButton = e.querySelector('.fullscreen');
     fullButton.window = e;
-    fullButton.setAttribute("onClick", "fullscreen(this.window)");
+    fullButton.setAttribute("onClick", "window.classList.toggle('fullscreen')");
 
     var minButton = e.querySelector('.minimize');
     minButton.window = e;
-    minButton.setAttribute("onClick", "minimize(this.window)");
+    minButton.setAttribute("onClick", "window.classList.toggle('minimized')");
     
     var contentDiv = e.querySelector('.win-content');
     if (content.innerHTML != undefined) {
@@ -591,47 +654,6 @@ function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, parent=desktop
     
     windowId++;
 }
-
-
-function fullscreen(e) {
-    // doesn't work completely right- the css doesn't cooperate very well
-    // this can and will be changed later but i just want baseline functionality at the moment
-    wc = e.querySelector('.win-content');
-    if (wc.hasAttribute("hidden")) return;
-    if (!e.fullscreen) {
-        var rect = wc.getBoundingClientRect();
-        e.oldx = rect.left; e.oldy = rect.top; e.oldw = rect.width; e.oldh = rect.height;
-        e.style.setProperty('--x', 0);
-        e.style.setProperty('--y', 0);
-        e.style.setProperty('--rot', 0);
-        wc.style.setProperty('width', window.innerWidth+'px');
-        wc.style.setProperty('height', (window.innerHeight-75)+'px');
-    }
-    else {
-        e.style.setProperty('--x', e.oldx + 'px');
-        e.style.setProperty('--y', e.oldy + 'px');
-        wc.style.setProperty('width', 'auto');
-        wc.style.setProperty('height', 'auto');
-    }
-    e.fullscreen = !e.fullscreen;
-}
-
-function minimize(e) {
-    wc = e.querySelector('.win-content');
-    cap = e.querySelector('.win-caption');
-    if (wc.hasAttribute("hidden"))
-    {
-        wc.removeAttribute("hidden");
-        //cap.style.setProperty("opacity", 1);
-	//cap.style.setProperty("scalex", "200%");
-    }
-    else {
-        wc.setAttribute("hidden", null);
-        //cap.style.setProperty("opacity", 0);
-	//cap.style.setProperty("scalex", "100%");
-    }
-}
-
 
 var isDragging = false;
 var dragWindow = null;
