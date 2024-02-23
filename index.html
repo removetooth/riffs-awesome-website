@@ -151,6 +151,7 @@ input {
   border-color:darkgray;
   background-color:lightgray;
   #image-rendering:pixelated;
+  margin-left:5px;
 }
 .taskbar-button:active {
   border-style:inset;
@@ -281,7 +282,7 @@ button:active {
 
 <div id="updatebox" align="right" class="updatebox" style="position:absolute;right:10px;">
     <span class="win-bar-button" style="position:absolute; left:6px; top:2px; --color:#ff5050" onclick="parentElement.classList.add('vanish');">&#x1F5D9;</span>
-    last update 2/23/2024<br>-------<br>fullscreen & minimize work properly!<br>lots of css, very fun<br>also notepad can save files now
+    last update 2/23/2024 -<br>- moved taskbar icons to desktop<br>- taskbar now shows open windows<br>- probably some other stuff i forgot
     <br><a style="color:#9e9eff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github!</a>
 </div>
 
@@ -547,16 +548,31 @@ function paintFillBG(canvas) {
 <div style="position:absolute;height:100%;width:100%;background-color:black;opacity:0.07;" onclick="document.getElementById('desktopico_none').checked=true"></div>
 
 <!-- desktop icons -->
+<div id="desktop-icons" style="display:flex;flex-direction:column;flex-wrap:wrap;height:calc(100% - 48px);column-gap:10px;align-content:flex-start;row-gap:10px;">
 
-<input type="radio" id="desktopico_games" name="desktopicon" hidden />
-<label for="desktopico_games">
-  <div align="center" class="fileico" style="top:25px;left:25px">
-    <img src="assets/icons/gameico.png" ondblclick="CreateWindow('Games', document.getElementById('explorerTemplate_games'), 'assets/icons/gameico.png');"/><br>
-    <span style="padding:0px 3px;background-color:#00000040;color:white">Games</span>
-  </div>
-</label>
-
+<div class="desktop-icon" name='Games' icon='assets/icons/gameico.png' function="CreateWindow('Games', document.getElementById('explorerTemplate_games'), 'assets/icons/gameico.png')"></div>
+<div class="desktop-icon" name='Guestbook' icon='assets/icons/guestbook.png' function="CreateWindow('Guestbook', document.getElementById('guestbookTemplate'), 'assets/icons/guestbook.png')"></div>
+<div class="desktop-icon" name='Notepad' icon='assets/icons/notes.png' function="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/icons/notes.png')"></div>
+<div class="desktop-icon" name='Paint' icon='assets/icons/paint.png' function="CreateWindow('Paint', document.getElementById('paintTemplate'), 'assets/icons/paint.png')"></div>
+<div class="desktop-icon" name='Internet' icon='assets/icons/internet.png' function="CreateWindow('Internet', document.getElementById('browserTemplate'), 'assets/icons/internet.png')"></div>
 <input type="radio" id="desktopico_none" name="desktopicon" checked hidden />
+
+</div>
+<script>
+icons = document.getElementById('desktop-icons').querySelectorAll(".desktop-icon");
+for (i of icons) {
+  name = i.attributes['name'].value;
+  icon = i.attributes['icon'].value;
+  func = i.attributes['function'].value;
+  i.outerHTML = `<input type="radio" id="desktopico_${name}" name="desktopicon" hidden />
+    <label for="desktopico_${name}">
+      <div align="center" class="fileico" style="top:25px;left:25px">
+        <img width=48 height=48 src="${icon}" ondblclick="${func}"/><br>
+        <span style="padding:0px 3px;background-color:#00000040;color:white">${name}</span>
+      </div>
+    </label>`;
+}
+</script>
 
 <!-- taken directly from http://www.themostamazingwebsiteontheinternet.com/
       at the request of a friend -->
@@ -581,10 +597,6 @@ function gregg() {
 <!--taskbar?-->
 <div id="taskbar" class="taskbar">
   <span style="position:absolute;left:50px;top:50%;transform:translateY(-50%);">
-    <img class="taskbar-button" src="assets/icons/notes.png" onclick="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/icons/notes.png');">&nbsp;
-    <img class="taskbar-button" src="assets/icons/internet.png" onclick="CreateWindow('Internet', document.getElementById('browserTemplate'), 'assets/icons/internet.png');">&nbsp;
-    <img class="taskbar-button" src="assets/icons/paint.png" onclick="CreateWindow('Paint', document.getElementById('paintTemplate'), 'assets/icons/paint.png');">&nbsp;
-    <img class="taskbar-button" src="assets/icons/guestbook.png" onclick="CreateWindow('Guestbook', document.getElementById('guestbookTemplate'), 'assets/icons/guestbook.png');">
   </span>
 </div>
 
@@ -639,7 +651,7 @@ function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, parent=desktop
     
     var closeButton = e.querySelector('.popupclose');
     closeButton.window = e;
-    closeButton.setAttribute("onClick", "this.window.classList.add('closed'); setTimeout(() => {this.window.remove();}, 200);");
+    closeButton.setAttribute("onClick", "this.window.classList.add('closed'); setTimeout(() => {this.window.remove(); document.getElementById('task"+windowId+"').remove()}, 200);");
     
     var fullButton = e.querySelector('.fullscreen');
     fullButton.window = e;
@@ -654,7 +666,10 @@ function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, parent=desktop
 	var cloneContent = content.content.cloneNode(true);
 	contentDiv.appendChild(cloneContent);
     }
-    else contentDiv.innerHTML = content.replaceAll("{ID}", newID);
+    else contentDiv.innerHTML = content.replaceAll("{ID}", newId);
+    
+    taskbar = document.getElementById("taskbar").querySelector("span");
+    taskbar.innerHTML += '<img id="task'+windowId+'" class="taskbar-button" src="'+icon+'" onclick="makeMeHighest(document.getElementById(\''+newId+'\'));" />';
     
     windowId++;
 }
@@ -697,6 +712,8 @@ function winDragEnd(event) {
     openWindowY = parseInt(dragWindow.style.getPropertyValue('--y')) + 30;
     dragWindow = null;
 }
+
+
 
 document.onmousedown = winDragStart;
 document.onmousemove = winDragMove;
