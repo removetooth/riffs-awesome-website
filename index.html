@@ -6,6 +6,8 @@
 <meta content="i made it (riff) (that's me) :3" property="og:description" />
 <meta content="#c80000" data-react-helmet="true" name="theme-color" />
 <meta property="og:image" content="https://get.moist.live/assets/preview.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="discord:card" content="summary_large_image" />
 <link rel="icon" href="favicon.ico">
 <style>
 
@@ -620,6 +622,7 @@ function CreateWindow(title, content, icon="", x=-1, y=-1, rot=0, parent=desktop
         e.style.setProperty('--y', openWindowY+"px");
         openWindowX = (openWindowX + 30) % (window.innerWidth-70);
         openWindowY = (openWindowY + 30) % (window.innerHeight-70);
+	console.log(openWindowX + " " + openWindowY);
     }
     else
     {
@@ -685,10 +688,14 @@ function winDragMove(event) {
 
 function winDragEnd(event) {
     isDragging = false;
+    if (dragWindow == undefined || dragWindow == null) return;
     dragWindow.style.setProperty('cursor', 'inherit');
     document.body.classList.remove("noselect");
     var frames = dragWindow.querySelectorAll(".win-xframe")
     for (i=0; i<frames.length; i++) {frames[i].hidden = false;}
+    openWindowX = parseInt(dragWindow.style.getPropertyValue('--x')) + 30;
+    openWindowY = parseInt(dragWindow.style.getPropertyValue('--y')) + 30;
+    dragWindow = null;
 }
 
 document.onmousedown = winDragStart;
