@@ -152,6 +152,8 @@ input {
   background-color:lightgray;
   #image-rendering:pixelated;
   margin-left:5px;
+  width:32px;
+  height:32px;
 }
 .taskbar-button:active {
   border-style:inset;
@@ -282,7 +284,7 @@ button:active {
 
 <div id="updatebox" align="right" class="updatebox" style="position:absolute;right:10px;">
     <span class="win-bar-button" style="position:absolute; left:6px; top:2px; --color:#ff5050" onclick="parentElement.classList.add('vanish');">&#x1F5D9;</span>
-    last update 2/23/2024 -<br>- moved taskbar icons to desktop<br>- taskbar now shows open windows<br>- probably some other stuff i forgot
+    last update 3/4/2025 -<br>- what's this? a new game!?<br><a href="https://get.moist.live/game/scribbletechdemo">scribble sandbox</a> is here now!<br>it's in the early phases, but far<br>along enough now to show off :)
     <br><a style="color:#9e9eff" href="https://github.com/removetooth/riffs-awesome-website/">view page source & history on github!</a>
 </div>
 
@@ -290,7 +292,7 @@ button:active {
 
 <template id="windowTemplate">
 <div class="fpopup closed" id="tempwinid" onmousedown="makeMeHighest(this);">
-    <div class="win-dragbar" align="center" onmousedown="winDragStart(event, this.parentElement);" onmousemove="winDragMove(event, this.parentElement);" onmouseup="winDragEnd(this.parentElement);">
+    <div class="win-dragbar" align="center" onmousedown="winDragStart(event, this.parentElement);" onmousemove="winDragMove(event, this.parentElement);" onmouseup="winDragEnd(this.parentElement);" ontouchstart="winDragStart(event, this.parentElement);" ontouchmove="winDragMove(event, this.parentElement);" ontouchend="winDragEnd(this.parentElement);">
         <img class="win-icon" style="position:absolute;left:1px;height:24px" src="">
         <div style="position:absolute;right:3px;top:-3px;">
             <span class="win-bar-button minimize" style="--color:#0050ff">&#x1F5D5;</span>
@@ -358,13 +360,18 @@ function np_save(me) {
 
 <template id="explorerTemplate_games">
   <div class="wc-bevel fullscreen-scale" style="padding:20px;--w:320px;--h:200px;display:inline-flex;flex-direction:row;">
+	<div class="fileico">
+      <img src="assets/icons/super_perlin_11.png" ondblclick="CreateWindow('Scribble Sandbox', document.getElementById('ssboxTemplate'), 'assets/icons/gameico.png')" ontouchend="CreateWindow('Scribble Sandbox', document.getElementById('ssboxTemplate'), 'assets/icons/gameico.png')"/><br>
+      Scribble Sandbox
+    </div>&emsp;
+  
     <div class="fileico">
-      <img src="assets/icons/super_perlin_11.png" ondblclick="window.location.href = 'https://get.moist.live/game/shadertest'"/><br>
+      <img src="assets/icons/super_perlin_11.png" ondblclick="window.location.href = 'https://get.moist.live/game/shadertest'" ontouchend="window.location.href = 'https://get.moist.live/game/shadertest'"/><br>
       (DEMO) shadertest
     </div>&emsp;
     
     <div class="fileico">
-      <img src="assets/icons/navmesh.png" ondblclick="window.location.href = 'https://get.moist.live/game/navmeshtest'"/><br>
+      <img src="assets/icons/navmesh.png" ondblclick="window.location.href = 'https://get.moist.live/game/navmeshtest'" ontouchend="window.location.href = 'https://get.moist.live/game/navmeshtest'"/><br>
       (DEMO) navmeshtest
     </div>
   </div>
@@ -465,7 +472,7 @@ TODO: fix tabs vs spaces in javascript -->
   <button onclick="paintFillBG(this.parentElement.parentElement.querySelector('.paint-window'))">Set BG color</button><br>
   </div>
   <div class="wc-bevel">
-  <canvas class="paint-window" width="640" height="480" style="cursor:crosshair;background-color:white;vertical-align:bottom;" onmousedown="paintStart(this, event,  this.parentElement.parentElement.querySelector('.paint-size').value)" onmousemove="paint(this, event)" onmouseup="paintEnd(this, event)" onmouseleave="paint(this, event); paintEnd(this, event)"></canvas>
+  <canvas class="paint-window" width="640" height="480" style="cursor:crosshair;background-color:white;vertical-align:bottom;" onmousedown="paintStart(this, event,  this.parentElement.parentElement.querySelector('.paint-size').value)" onmousemove="paint(this, event)" onmouseup="paintEnd(this, event)" ontouchstart="paintStart(this, event,  this.parentElement.parentElement.querySelector('.paint-size').value)" ontouchmove="paint(this, event)" ontouchend="paintEnd(this, event)" onmouseleave="paint(this, event); paintEnd(this, event)"></canvas>
   </div>
 </template>
 <script>
@@ -539,6 +546,19 @@ function paintFillBG(canvas) {
 
 <!-- END PAINT CODE -->
 
+<template id="ssboxTemplate">
+	<span class="dropdown" onclick="classList.toggle('open')" onmouseleave="classList.remove('open')">
+		Game
+		<div class="menu">
+		  <div class="item" onclick="window.location.href = 'https://get.moist.live/game/scribbletechdemo';">Go to game page directly</div>
+		  <div class="item" onclick="navigator.clipboard.writeText('https://get.moist.live/game/scribbletechdemo');">Copy link to game page</div>
+		</div>
+	</span><br>
+    <iframe class="gb-xframe wc-bevel fullscreen-scale" style="background-color:white;--w:768px;--h:432px;--hminus:calc(1em + 5px);" src="https://get.moist.live/game/scribbletechdemo"></iframe><br>
+	<div style="display:flex;justify-content:center;">
+	</div>
+</template>
+
 
 <!-- doing this so windows and stuff can go offscreen, while not extending the page-->
 <div id="desktop" style="position:fixed;left:0;top:0;width:100%;height:100%;overflow:hidden;z-index:1;">
@@ -551,6 +571,7 @@ function paintFillBG(canvas) {
 <div id="desktop-icons" style="display:flex;flex-direction:column;flex-wrap:wrap;height:calc(100% - 48px);column-gap:10px;align-content:flex-start;row-gap:10px;">
 
 <div class="desktop-icon" name='Games' icon='assets/icons/gameico.png' function="CreateWindow('Games', document.getElementById('explorerTemplate_games'), 'assets/icons/gameico.png')"></div>
+<div class="desktop-icon" name='Scribble Sandbox' icon='assets/icons/ssbox.png' function="CreateWindow('Scribble Sandbox', document.getElementById('ssboxTemplate'), 'assets/icons/ssbox.png')"></div>
 <div class="desktop-icon" name='Guestbook' icon='assets/icons/guestbook.png' function="CreateWindow('Guestbook', document.getElementById('guestbookTemplate'), 'assets/icons/guestbook.png')"></div>
 <div class="desktop-icon" name='Notepad' icon='assets/icons/notes.png' function="CreateWindow('Notepad', document.getElementById('notepadTemplate'), 'assets/icons/notes.png')"></div>
 <div class="desktop-icon" name='Paint' icon='assets/icons/paint.png' function="CreateWindow('Paint', document.getElementById('paintTemplate'), 'assets/icons/paint.png')"></div>
@@ -567,7 +588,7 @@ for (i of icons) {
   i.outerHTML = `<input type="radio" id="desktopico_${name}" name="desktopicon" hidden />
     <label for="desktopico_${name}">
       <div align="center" class="fileico" style="top:25px;left:25px">
-        <img width=48 height=48 src="${icon}" ondblclick="${func}"/><br>
+        <img width=48 height=48 src="${icon}" ondblclick="${func}" ontouchend="${func}" /><br>
         <span style="padding:0px 3px;background-color:#00000040;color:white">${name}</span>
       </div>
     </label>`;
